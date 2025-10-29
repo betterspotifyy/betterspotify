@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jas gews</title>
+</head>
+<body style="margin:0; background-color:black; color:white; font-family:Arial; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; overflow:hidden;">
+
+  <div id="buttons" style="display:flex; gap:30px;">
+    <button id="musicBtn" 
+      style="background-color:green; color:white; border:none; border-radius:50px; padding:20px 40px; font-size:18px; cursor:pointer; transition:0.3s;">
+      🎵 Muzyka
+    </button>
+
+    <button id="videoBtn" 
+      style="background-color:green; color:white; border:none; border-radius:50px; padding:20px 40px; font-size:18px; cursor:pointer; transition:0.3s;">
+      🎬 Filmik
+    </button>
+  </div>
+
+  <div id="musicBox" style="display:none; background-color:#111; border-radius:15px; padding:20px; margin-top:30px; width:300px;">
+    <h3 style="text-align:center; color:lime;">Moja playlista</h3>
+
+    <div style="background-color:#222; border-radius:10px; padding:10px; margin-top:10px;">
+      <p>Utwór 1</p>
+      <audio controls style="width:100%;">
+        <source src="muzyka1.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <div style="background-color:#222; border-radius:10px; padding:10px; margin-top:10px;">
+      <p>Utwór 2</p>
+      <audio controls style="width:100%;">
+        <source src="muzyka2.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+  </div>
+
+  <video id="crazyVideo" src="filmik.mp4" style="position:absolute; width:200px; height:120px; display:none; border-radius:10px; left:0; top:0;"></video>
+
+  <!-- Szary napis: pobiera plik i przekierowuje na gify.html -->
+  <a href="gify.html" id="downloadLink" 
+     style="position:absolute; bottom:10px; right:10px; font-size:12px; color:gray; text-decoration:none;">
+     klikasz na swoją odpowiedzialność ⚠️
+  </a>
+
+  <script>
+    const musicBtn = document.getElementById('musicBtn');
+    const videoBtn = document.getElementById('videoBtn');
+    const musicBox = document.getElementById('musicBox');
+    const video = document.getElementById('crazyVideo');
+
+    // funkcja fullscreen
+    function goFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("Fullscreen error:", err);
+        });
+      }
+    }
+
+    // efekt hover
+    function addHoverEffect(btn) {
+      btn.addEventListener('mouseover', () => {
+        btn.style.transform = 'scale(1.2)';
+        btn.style.boxShadow = '0 0 20px lime';
+      });
+      btn.addEventListener('mouseout', () => {
+        btn.style.transform = 'scale(1)';
+        btn.style.boxShadow = 'none';
+      });
+    }
+
+    addHoverEffect(musicBtn);
+    addHoverEffect(videoBtn);
+
+    // kliknięcie MUZYKA — fullscreen + przełączanie playlisty
+    let musicVisible = false;
+    musicBtn.addEventListener('click', () => {
+      goFullscreen();
+      musicVisible = !musicVisible;
+      musicBox.style.display = musicVisible ? 'block' : 'none';
+    });
+
+    // kliknięcie FILMIK — fullscreen + szybki, płynny ruch
+    let videoInterval;
+    videoBtn.addEventListener('click', () => {
+      goFullscreen();
+      video.style.display = 'block';
+      video.play();
+
+      if (videoInterval) clearInterval(videoInterval);
+
+      const moveVideo = () => {
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 120);
+        video.style.transition = 'left 0.2s linear, top 0.2s linear';
+        video.style.left = x + 'px';
+        video.style.top = y + 'px';
+      };
+
+      videoInterval = setInterval(moveVideo, 150);
+    });
+
+    // kliknięcie w szary napis: pobiera plik i przekierowuje
+    const downloadLink = document.getElementById('downloadLink');
+    downloadLink.addEventListener('click', (e) => {
+      e.preventDefault(); // blokuje natychmiastowe przejście
+
+      // tworzymy tymczasowy link do pobrania
+      const a = document.createElement('a');
+      a.href = 'obrazek.jpg';           // plik do pobrania
+      a.download = 'draha.jpg';  // nazwa pliku
+      document.body.appendChild(a);
+      a.click();                         // wywołanie pobrania
+      document.body.removeChild(a);
+
+      // po krótkiej chwili przekierowujemy na gify.html
+      setTimeout(() => {
+        window.location.href = 'gify.html';
+      }, 100); // 100ms wystarczy na rozpoczęcie pobierania
+    });
+  </script>
+
+</body>
+</html>
